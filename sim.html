@@ -679,20 +679,11 @@
           return null;
         }
 
-        var x = parseInt(minval, 10) * 60 + parseInt(secval, 10);
-        console.log(minval + ":" + secval + ":" + x);
-
-
-        return x;
-
-      }
-
-      function gettimevaluepermitnull(minval, secval) {
-
-
-        if ((minval == 0) && (secval == 0)) {
-          return null;
-        }
+        if (minval=="")
+          minval=0;
+          
+        if (secval=="")
+          secval=0;
 
         var x = parseInt(minval, 10) * 60 + parseInt(secval, 10);
         console.log(minval + ":" + secval + ":" + x);
@@ -701,6 +692,8 @@
         return x;
 
       }
+
+      
 
       function findmaxtimeval() {
 
