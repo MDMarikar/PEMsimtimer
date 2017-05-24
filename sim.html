@@ -24,7 +24,15 @@
 
   <style>
   
-   
+   .ui-page { 
+    background:#2b2e31;
+    }
+    
+    .ui-grid-a { 
+    background:purple;
+    }
+    
+    
     label {
       font-weight: bold;
     }
@@ -49,6 +57,9 @@
     div {
       cursor: pointer;
     }
+    
+  
+    
     
     .simtimer {
       background: purple;
@@ -83,124 +94,101 @@
     $(document).ready(function() {
       
      
-
       $(":input").val(0);
       var simtimer = getTimecircle();
       var hashtag = "#";
       var resettstr = "R";
-
-
-
-      $("#start").click(function() {
-
-        simtimer.start();
-
-
-
-      });
-
-      $("#pause").click(function() {
-        simtimer.stop();
-
-      });
-
-
-      $("#reset").click(function() {
-       // $(":input").val(0);
-        
-
-        
-        simtimer.restart();
-        
-        //location.restart();
-
-      });
-
+      
+      
       setupSetup();
+      
+      //when number is selected, put cursor at end
+      $(':input[type="number"]').click( function(){
+        var x = $(this).val();
+        $(this).val(x);
 
+      }); 
+      
       $('a').click(function(e) {
-
-
+        
+        //console.log(e.target.id);
+        
+        if (e.target.id == "start")
+        {
+          simtimer.start();
+          return;
+          
+        }
+        
+        if (e.target.id == "pause")
+        {
+          simtimer.stop();
+          return;
+          
+        }
+        
+        if (e.target.id == "reset")
+        {
+          location.reload();
+          return;
+          
+        }
+        
+   
+        
+        if (e.target.id =="tableview")
+        {
+          
+          updatetableview();
+          return;
+        }
+        
         if (e.target.id == "graphing") {
-
-
-
           graphprep();
           return;
-
-
         }
-
         if (e.target.id == "returnToSim") {
-
-
-
           try {
-
-
         
             
-
             $("#KPLabelling").text("Main Problem: " + $("#KPSetup").val());
             $("#KTLabelling").text("Definitive Treatment: " + $("#KTSetup").val());
-
-
             $("#AirWayLabelling").text($("#AirWaySetup").val());
             $("#BLabelling").text($("#BSetup").val());
             $("#CLabelling").text($("#CSetup").val());
             $("#DLabelling").text($("#DSetup").val());
             $("#ELabelling").text($("#ESetup").val());
-
           } catch (err) {
             alert(err);
           }
-
-
           return;
         }
-
-
-
-
-
+        
+        
         var t = simtimer.getTime();
         t = Math.round(Math.abs(t));
         var secs = t % 60;
         var mins = Math.floor(t / 60);
-
         var target = $(e.target);
         var resetting = target.attr('id').includes('R');
-
         var inputelement = hashtag + target.attr('id');
         if (resetting) {
           inputelement = inputelement.substring(0, inputelement.length - 1);
         }
-
+        
+        //alert(inputelement);
         var inputsecs = inputelement + "secsInput";
         var inputmins = inputelement + "minsInput";
-
-
         if (resetting) {
-
-
-
           $(inputsecs).val(0);
           $(inputmins).val(0);
-
         } else {
-
           $(inputsecs).val(secs);
           $(inputmins).val(mins);
-
-
         }
-
       });
-
     });
-
     function getTimecircle() {
-
       return $(".simtimer").TimeCircles({
         start: false,
         time: {
@@ -219,13 +207,9 @@
             color: "#C0C8CF"
           }
         }
-
       });
     }
-
-
     function setupSetup() {
-
       $('#AirWaySetup').val("Airway Event");
       $('#BSetup').val("Breathing Event");
       $('#CSetup').val("Circulation Event");
@@ -233,9 +217,84 @@
       $('#ESetup').val("Exposure Event");
       $('#KPSetup').val("Key Problem");
       $('#KTSetup').val("Definitive Treatment");
-
-
     }
+    
+    function updatetableview()
+    {
+      
+      
+        //Tasks
+        console.log("***");
+       $("[data-simtasktype]").each(function(){
+        var eventTypeID = "#"+$(this).data("simtasktype");
+        console.log(eventTypeID);
+        var eventTypeText = $(eventTypeID).text();
+        console.log(eventTypeText);
+        console.log($(this).text());
+        $(this).text(eventTypeText);
+        console.log($(this).text());
+        //$("#"+(this).attr("id")).text(eventTypeText);
+        console.log("***");
+    });
+    
+       //Task Descriptions
+       console.log("**desc*");
+       $("[data-taskdesc]").each(function(){
+        var descID = "#"+$(this).data("taskdesc");
+        console.log(descID);
+        var descText = $(descID).text();
+        console.log(descText);
+        console.log($(this).text());
+        $(this).text(descText);
+        console.log($(this).text());
+        //$("#"+(this).attr("id")).text(eventTypeText);
+        console.log("**desc*");
+       });
+       
+       
+       populatetablenumeric("omins");
+       populatetablenumeric("osecs");
+       populatetablenumeric("imins");
+       populatetablenumeric("isecs");
+        populatetablenumeric("tmins");
+       populatetablenumeric("tsecs");
+       
+       
+       
+       
+      
+    }
+    
+    //populates the results table using ids of asssociated
+    //numeric input elements
+    function populatetablenumeric(attribute_name)
+    {
+      
+      var attribute_tag = $("[data-"+attribute_name+"]");
+      $(attribute_tag).each(function(){
+        
+        var idfield = "#"+$(this).data(attribute_name);
+        console.log("***"+idfield);
+        console.log(idfield);
+        var idval = $(idfield).val();
+        console.log(idval);
+        if ((idval == "") || (idval == null))
+          idval = 0;
+        console.log($(this).text());
+        $(this).text(idval);
+        console.log($(this).text());
+        //$("#"+(this).attr("id")).text(eventTypeText);
+        console.log("***"+idfield);
+        
+        
+        
+        
+      });
+      
+      
+      
+    }
+    
   </script>
 
 
@@ -244,28 +303,41 @@
 
 <body>
 
+
+
+<!-- main page -->
+
   <div data-role="page" id="pageone" data-theme="b">
 
 
 
 
 
-
     <div data-role="header" data-position="fixed">
-      <div class=simtimer style="width: 100%" data-timer="0"></div>
-      <div data-role="controlgroup" data-type="horizontal" class="timercontrol">
+      <div class="ui-grid-a">
+      <div class="simtimer ui-block-a" style="width: 75%" data-timer="0"></div>
+      <div class="ui-block-b" style="width:25%;font-size: 35px">#EM3</div>
+      </div>
+      <div class="ui-grid-e">
+        <!--
         <input type="button" id="start" value="start">
         <input type="button" id="pause" value="pause">
         <input type="button" id="reset" value="reset">
-        <a href="#pagetwo" class="ui-btn" id="graphing">graph</a>
-        <a href="#setUpMenu" class="ui-btn" id="setup">setup</a>
+        -->
+        
+        <div class="ui-block-a"><a href="#start" id="start" class="ui-corner-all ui-shadow ui-btn ui-icon-carat-r ui-btn-icon-top">start</a></div>
+        <div class="ui-block-b"><a href="#pause" id="pause" class="ui-corner-all ui-shadow ui-btn ui-icon-bars ui-btn-icon-top">pause</a></div>
+        <div class="ui-block-c"><a href="#reset" id="reset" class="ui-corner-all ui-shadow ui-btn ui-icon-refresh ui-btn-icon-top">reset</a></div>
+        <div class="ui-block-d"><a href="#pagetwo" class="ui-corner-all ui-shadow ui-btn ui-icon-eye ui-btn-icon-top" id="graphing">debrief</a></div>
+        <div class="ui-block-e"><a href="#setUpMenu" class="ui-corner-all ui-shadow ui-btn ui-icon-gear ui-btn-icon-top" id="setup">setup labels</a></div>
 
 
       </div>
+
     </div>
 
     <div data-role="main" class="ui-content" >
-      <h2>A</h2>
+      <h2 id="atask">A</h2>
       <h3 id="AirWayLabelling">Airway Task</h3>
 
 
@@ -333,7 +405,7 @@
       </table>
 
       <!-- B Task -->
-      <h2>B</h2>
+      <h2 id="btask">B</h2>
       <h3 id="BLabelling">Breathing Task</h3>
 
       <table data-role="table" class="ui-responsive">
@@ -400,7 +472,7 @@
       </table>
 
       <!-- C Task -->
-      <h2>C</h2>
+      <h2 id="ctask">C</h2>
       <h3 id="CLabelling">Circulation Task</h3>
 
       <table data-role="table" class="ui-responsive">
@@ -467,7 +539,7 @@
       </table>
       
       <!-- D Task -->
-      <h2>D</h2>
+      <h2 id="dtask">D</h2>
       <h3 id="DLabelling">Disability Task</h3>
 
 
@@ -535,7 +607,7 @@
       </table>
 
       <!-- E Task -->
-      <h2>E</h2>
+      <h2 id="etask">E</h2>
       <h3 id="ELabelling">Exposure Task</h3>
 
       <table data-role="table" class="ui-responsive">
@@ -667,39 +739,30 @@
 
   </div>
 
+<!-- main page end -->
+
+
   <div data-role="page" id="pagetwo" data-theme="b">
 
 
 
     <script>
       function gettimevalue(minval, secval) {
-
-
         if ((minval == null) && (secval == null)) {
           return null;
         }
-
         if (minval=="")
           minval=0;
           
         if (secval=="")
           secval=0;
-
         var x = parseInt(minval, 10) * 60 + parseInt(secval, 10);
         console.log(minval + ":" + secval + ":" + x);
-
-
         return x;
-
       }
-
       
-
       function findmaxtimeval() {
-
         var x = Math.max(
-
-
           gettimevalue(document.getElementById("A1timemarkIminsInput").value, document.getElementById("A1timemarkIsecsInput").value),
           gettimevalue(document.getElementById("A1timemarkOminsInput").value, document.getElementById("A1timemarkOsecsInput").value),
           gettimevalue(document.getElementById("B1timemarkIminsInput").value, document.getElementById("B1timemarkIsecsInput").value),
@@ -717,62 +780,33 @@
           gettimevalue(document.getElementById("E1timemarkTminsInput").value, document.getElementById("E1timemarkTsecsInput").value),
           gettimevalue(document.getElementById("K1timemarkIminsInput").value, document.getElementById("K1timemarkIsecsInput").value),
           gettimevalue(document.getElementById("K1timemarkTminsInput").value, document.getElementById("K1timemarkTsecsInput").value)
-
         );
-
         var modval = x % 60;
-
         return (x - modval + 60);
-
-
-
       }
-
       function graphprep() {
-
-
         //start
-
         var maxtimeval = findmaxtimeval();
         if (maxtimeval == null) {
-
           alert("internal error: max time not calculated");
-
           maxtimeval = 300;
         }
-
         var keyprobtime = gettimevalue(document.getElementById("K1timemarkIminsInput").value, document.getElementById("K1timemarkIsecsInput").value); // Value of where the line will appear
         if (keyprobtime == 0) {
-
           keyprobtime = null;
         }
-
-
         var keyrxtime = gettimevalue(document.getElementById("K1timemarkTminsInput").value, document.getElementById("K1timemarkTsecsInput").value); // Value of where the line will appear
         if (keyrxtime == 0) {
-
           keyrxtime = null;
         }
-
         var identtime = " ("+document.getElementById("K1timemarkIminsInput").value+"m "+ document.getElementById("K1timemarkIsecsInput").value+"s"+")";
-
         var ttime = " ("+document.getElementById("K1timemarkTminsInput").value+"m "+ document.getElementById("K1timemarkTsecsInput").value+"s"+")";
-
-
           
         var container_chartFreqAtaTailNum = new Highcharts.Chart({
-
-
           chart:
-
           {
-
             events: {
               load: function() {
-
-
-
-
                 var label = this.renderer.label("A: " + $("#AirWaySetup").val())
                   .css({
                     width: 400,
@@ -787,14 +821,12 @@
                     'padding': 5
                   })
                   .add();
-
                 label.align(Highcharts.extend(label.getBBox(), {
                   align: 'bottom',
                   x: 0, // offset
                   verticalAlign: 'bottom',
                   y: label.getBBox().height, // offset
                 }), null, 'spacingBox');
-
                 var labelB = this.renderer.label("B: " + $("#BSetup").val())
                   .css({
                     width: 400,
@@ -809,14 +841,12 @@
                     'padding': 5
                   })
                   .add();
-
                 labelB.align(Highcharts.extend(label.getBBox(), {
                   align: 'bottom',
                   x: label.getBBox().width, // offset
                   verticalAlign: 'bottom',
                   y: label.getBBox().height, // offset
                 }), null, 'spacingBox');
-
                 var labelC = this.renderer.label("C: " + $("#CSetup").val())
                   .css({
                     width: 400,
@@ -831,14 +861,12 @@
                     'padding': 5
                   })
                   .add();
-
                 labelC.align(Highcharts.extend(label.getBBox(), {
                   align: 'bottom',
                   x: 0, // offset
                   verticalAlign: 'bottom',
                   y: label.getBBox().height * 2, // offset
                 }), null, 'spacingBox');
-
                 var labelD = this.renderer.label("D: " + $("#DSetup").val())
                   .css({
                     width: 400,
@@ -853,15 +881,12 @@
                     'padding': 5
                   })
                   .add();
-
                 labelD.align(Highcharts.extend(label.getBBox(), {
                   align: 'bottom',
                   x: labelC.getBBox().width, // offset
                   verticalAlign: 'bottom',
                   y: label.getBBox().height * 2, // offset
                 }), null, 'spacingBox');
-
-
                 var labelE = this.renderer.label("E: " + $("#ESetup").val())
                   .css({
                     width: 400,
@@ -876,14 +901,12 @@
                     'padding': 5
                   })
                   .add();
-
                 labelE.align(Highcharts.extend(label.getBBox(), {
                   align: 'bottom',
                   x: labelC.getBBox().width + labelD.getBBox().width, // offset
                   verticalAlign: 'bottom',
                   y: label.getBBox().height * 2, // offset
                 }), null, 'spacingBox');
-
                 var labelKP = this.renderer.label("Key Problem: " + $("#KPSetup").val())
                   .css({
                     width: 400,
@@ -898,14 +921,12 @@
                     'padding': 5
                   })
                   .add();
-
                 labelKP.align(Highcharts.extend(label.getBBox(), {
                   align: 'bottom',
                   x: 0, // offset
                   verticalAlign: 'bottom',
                   y: label.getBBox().height * 2 + labelC.getBBox().height // offset
                 }), null, 'spacingBox');
-
                 var labelKT = this.renderer.label("Definitive Treatment: " + $("#KTSetup").val())
                   .css({
                     width: 400,
@@ -920,64 +941,38 @@
                     'padding': 5
                   })
                   .add();
-
                 labelKT.align(Highcharts.extend(label.getBBox(), {
                   align: 'bottom',
                   x: labelKP.getBBox().width, // offset
                   verticalAlign: 'bottom',
                   y: label.getBBox().height * 2 + labelC.getBBox().height // offset// offset
                 }), null, 'spacingBox');
-
-
-
-
-
-
-
               }
-
-
             },
-
             spacingBottom: 100,
             type: 'columnrange',
             inverted: true,
-
-
             renderTo: 'container'
           },
-
           tooltip: {
             enabled: false
           },
           credits: {
             enabled: false
-
           },
-
-
-
           title: {
             text: 'Simulation Feedback'
           },
-
-
-
           subtitle: {
             text: ''
           },
-
           xAxis: {
             categories: ['A', 'B', 'C', 'D', 'E']
           },
-
           scrollbar: {
-            enabled: false
+            enabled: true
           },
-
           yAxis: {
-
-
             plotLines: [{
                 useHTML: true,
                 color: 'red', // Color value
@@ -985,14 +980,10 @@
                   text: 'main problem identified'+identtime,
                   verticalAlign: 'top',
                   rotation: 0
-
-
                 },
-
                 value: keyprobtime,
                 width: 2 // Width of the line
               },
-
               {
                 color: 'blue', // Color value
                 label: {
@@ -1000,88 +991,50 @@
                   verticalAlign: 'bottom',
                   rotation: 0
                 },
-
                 value: keyrxtime, // Value of where the line will appear
                 width: 2 // Width of the line
               }
             ],
-
             min: 0,
             max: maxtimeval,
             tickInterval: 60,
-
             title: {
               text: 'Time (min)'
             },
             labels: {
               formatter: function() {
-
-
                 return Math.floor(this.value / 60) + 'm';
               }
-
             },
-
-
-
-
-
           },
-
-
-
           plotOptions: {
-
-
-
             columnrange: {
-
               grouping: true,
               maxPointWidth: 100,
               borderColor: 'black',
-
               dataLabels: {
-
-
-
                 enabled: true,
-
                 align: 'top',
-
-
-
-
                 formatter: function() {
                   var labelstring = '';
                   var minval = 0;
                   var minval = Math.floor(this.y / 60);
-
                   if (minval != 0) {
                     var labelstring = minval + 'm ';
                   }
                   labelstring = labelstring + this.y % 60 + 's';
-
                   return labelstring;
                 }
               }
-
-
-
-
-
-
             }
           },
-
           legend: {
             enabled: true,
             align: 'right'
           },
-
           series: [{
               name: 'From problem occurence to identification',
               enabled: false,
-
               data: [
                 [gettimevalue(document.getElementById("A1timemarkIminsInput").value, document.getElementById("A1timemarkIsecsInput").value),
                   gettimevalue(document.getElementById("A1timemarkOminsInput").value, document.getElementById("A1timemarkOsecsInput").value)
@@ -1098,87 +1051,63 @@
                 [gettimevalue(document.getElementById("E1timemarkIminsInput").value, document.getElementById("E1timemarkIsecsInput").value),
                   gettimevalue(document.getElementById("E1timemarkOminsInput").value, document.getElementById("E1timemarkOsecsInput").value)
                 ]
-
               ],
-
               dataLabels: {
                 enabled: true,
                 xLow: -10,
                 xHigh: 20,
-
-
               },
-
               color: 'red'
-
             },
-
             {
               name: 'From problem occurence to treatment',
-
               data: [
                 [gettimevalue(document.getElementById("A1timemarkIminsInput").value, document.getElementById("A1timemarkIsecsInput").value),
                   gettimevalue(document.getElementById("A1timemarkTminsInput").value, document.getElementById("A1timemarkTsecsInput").value)
                 ],
-
                 [gettimevalue(document.getElementById("B1timemarkIminsInput").value, document.getElementById("B1timemarkIsecsInput").value),
                   gettimevalue(document.getElementById("B1timemarkTminsInput").value, document.getElementById("B1timemarkTsecsInput").value)
                 ],
-
                 [gettimevalue(document.getElementById("C1timemarkIminsInput").value, document.getElementById("C1timemarkIsecsInput").value),
                   gettimevalue(document.getElementById("C1timemarkTminsInput").value, document.getElementById("C1timemarkTsecsInput").value)
                 ],
-
                 [gettimevalue(document.getElementById("D1timemarkIminsInput").value, document.getElementById("D1timemarkIsecsInput").value),
                   gettimevalue(document.getElementById("D1timemarkTminsInput").value, document.getElementById("D1timemarkTsecsInput").value)
                 ],
-
                 [gettimevalue(document.getElementById("E1timemarkIminsInput").value, document.getElementById("E1timemarkIsecsInput").value),
                   gettimevalue(document.getElementById("E1timemarkTminsInput").value, document.getElementById("E1timemarkTsecsInput").value)
                 ]
-
-
               ],
-
-
               dataLabels: {
                 enabled: true,
                 xLow: -10,
                 xHigh: 20,
-
-
-
               },
-
               color: 'blue'
             }
-
-
-
           ]
-
-
           //dil
         });
-
         //end
-
-
-
-
-
       }
     </script>
 
 
     <div data-role="header" data-position="fixed" data-theme="b">
-      <a href="#pageone" class="ui-btn" id="returnToSim">Return to simulation</a>
+      <div data-role="controlgroup" data-type="horizontal">
+          
+          <a href="#pageone" class="ui-btn" id="returnToSim">Return to simulation</a>
+          <a href="#tableview" class="ui-btn" id="tableview">table view</a>
+
+
+      </div>
+    
     </div>
 
     <div data-role="main" class="ui-content">
 
 
-      <div id="container" style="width: 80%; height:75%"></div>
+      <div id="container"></div>
 
 
     </div>
@@ -1190,8 +1119,17 @@
 
 
   <div data-role="page" id="setUpMenu" class="ui-corner-all" data-theme="b">
+    
+    
+    
     <div data-role="header" data-position="fixed" data-theme="b">
-      <a href="#pageone" class="ui-btn" id="returnToSim">Return to simulation</a>
+      
+      <div data-role="controlgroup" data-type="horizontal">
+          
+          <a href="#pageone" class="ui-btn" id="returnToSim">Return to simulation</a>
+
+      </div>
+    
     </div>
 
     <div data-role="main" class="ui-content">
@@ -1241,7 +1179,161 @@
 
   </div>
 
+<!-- new page for table view -->
 
+
+
+  <div data-role="page" id="tableview" class="ui-corner-all" data-theme="b">
+      <div data-role="header" data-position="fixed" data-theme="b">
+        
+      
+        
+        <div data-role="controlgroup" data-type="horizontal">
+          
+          <a href="#pageone" class="ui-btn" id="returnToSim">Return to simulation</a>
+          <a href="#pagetwo" class="ui-btn" id="graphing">graph view</a>
+
+
+        
+        </div>
+        </div> <!-- header end -->
+
+      <div data-role="main" class="ui-content">
+      
+        <!--airway task -->
+        <div class="ui-corner-all">
+          
+          <div class="ui-bar ui-bar-b">
+            
+            <h3 data-simtasktype="atask">AAAAAAAA</h3>
+            <h3 data-taskdesc="AirWayLabelling">description</h3>
+          </div>
+            
+            <div class="ui-grid-b">
+					    <div class="ui-block-a"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Occured</h1><p></p><h2><span data-omins="A1timemarkIminsInput"/>0</span>m <span data-osecs="A1timemarkIsecsInput">0</span>s</h2></div></div>
+					    <div class="ui-block-b"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Identified</h1><p></p><h2><span data-imins="A1timemarkOminsInput"/>0</span>m <span data-isecs="A1timemarkOsecsInput">0</span>s</h2></div></div>
+					    <div class="ui-block-c"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Treated</h1><p></p><h2><span data-tmins="A1timemarkTminsInput"/>0</span>m <span data-tsecs="A1timemarkTsecsInput">0</span>s</h2></div></div>
+				    </div><!-- /grid-b -->
+			    
+          
+        </div> <!-- ui corner all -->
+        <!-- airway task -->
+        
+        
+        <!--b task -->
+        <div class="ui-corner-all">
+          
+          <div class="ui-bar ui-bar-b">
+            
+            <h3 data-simtasktype="btask">BBBBBBBB</h3>
+            <h3 data-taskdesc="BLabelling">description</h3>
+          </div>
+
+            <div class="ui-grid-b">
+					    <div class="ui-block-a"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Occured</h1><p></p><h2><span data-omins="B1timemarkIminsInput"/>0</span>m <span data-osecs="B1timemarkIsecsInput">0</span>s</h2></div></div>
+					    <div class="ui-block-b"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Identified</h1><p></p><h2><span data-imins="B1timemarkOminsInput"/>0</span>m <span data-isecs="B1timemarkOsecsInput">0</span>s</h2></div></div>
+					    <div class="ui-block-c"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Treated</h1><p></p><h2><span data-tmins="B1timemarkTminsInput"/>0</span>m <span data-tsecs="B1timemarkTsecsInput">0</span>s</h2></div></div>
+				    </div><!-- /grid-b -->
+			    
+
+        </div> <!-- ui corner all -->
+        <!-- b task -->
+        
+        <!--c task -->
+        <div class="ui-corner-all">
+          
+          <div class="ui-bar ui-bar-b">
+            
+            <h3 data-simtasktype="ctask">C</h3>
+            <h3 data-taskdesc="CLabelling">description</h3>
+          </div>
+
+            <div class="ui-grid-b">
+					    <div class="ui-block-a"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Occured</h1><p></p><h2><span data-omins="C1timemarkIminsInput"/>0</span>m <span data-osecs="C1timemarkIsecsInput">0</span>s</h2></div></div>
+					    <div class="ui-block-b"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Identified</h1><p></p><h2><span data-imins="C1timemarkOminsInput"/>0</span>m <span data-isecs="C1timemarkOsecsInput">0</span>s</h2></div></div>
+					    <div class="ui-block-c"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Treated</h1><p></p><h2><span data-tmins="C1timemarkTminsInput"/>0</span>m <span data-tsecs="C1timemarkTsecsInput">0</span>s</h2></div></div>
+				    </div><!-- /grid-b -->
+			    
+
+        </div> <!-- ui corner all -->
+        <!-- c task -->
+        <!--d task -->
+        <div class="ui-corner-all">
+          
+          <div class="ui-bar ui-bar-b">
+            
+            <h3 data-simtasktype="dtask">DD</h3>
+            <h3 data-taskdesc="DLabelling">description</h3>
+          </div>
+
+            <div class="ui-grid-b">
+					    <div class="ui-block-a"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Occured</h1><p></p><h2><span data-omins="D1timemarkIminsInput"/>0</span>m <span data-osecs="D1timemarkIsecsInput">0</span>s</h2></div></div>
+					    <div class="ui-block-b"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Identified</h1><p></p><h2><span data-imins="D1timemarkOminsInput"/>0</span>m <span data-isecs="D1timemarkOsecsInput">0</span>s</h2></div></div>
+					    <div class="ui-block-c"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Treated</h1><p></p><h2><span data-tmins="D1timemarkTminsInput"/>0</span>m <span data-tsecs="D1timemarkTsecsInput">0</span>s</h2></div></div>
+				    </div><!-- /grid-b -->
+			    
+
+        </div> <!-- ui corner all -->
+        <!-- d task -->
+        
+        <!--e task -->
+        <div class="ui-corner-all">
+          
+          <div class="ui-bar ui-bar-b">
+            
+            <h3 data-simtasktype="etask">EE</h3>
+            <h3 data-taskdesc="ELabelling">description</h3>
+          </div>
+
+            <div class="ui-grid-b">
+					    <div class="ui-block-a"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Occured</h1><p></p><h2><span data-omins="E1timemarkIminsInput"/>0</span>m <span data-osecs="E1timemarkIsecsInput">0</span>s</h2></div></div>
+					    <div class="ui-block-b"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Identified</h1><p></p><h2><span data-imins="E1timemarkOminsInput"/>0</span>m <span data-isecs="E1timemarkOsecsInput">0</span>s</h2></div></div>
+					    <div class="ui-block-c"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Treated</h1><p></p><h2><span data-tmins="E1timemarkTminsInput"/>0</span>m <span data-tsecs="E1timemarkTsecsInput">0</span>s</h2></div></div>
+				    </div><!-- /grid-b -->
+			    
+
+        </div> <!-- ui corner all -->
+        <!-- d task -->
+        
+        <!--key events task -->
+        <div class="ui-corner-all">
+          
+          <div class="ui-bar ui-bar-b">
+            
+          <h3>Key Events</h3>
+          
+
+          </div>
+
+            <div class="ui-grid-a">
+              
+              <div class="ui-block-a"><div class="ui-bar ui-bar-b" ><h3><span data-taskdesc="KPLabelling"></span></h3></div></div>
+					    <div class="ui-block-b"><div class="ui-bar ui-bar-b" ><h3><span data-taskdesc="KTLabelling"></span></h3></div></div>
+					    
+					    
+					    
+					    <div class="ui-block-a"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Identified</h1><p></p><h2><span data-imins="K1timemarkIminsInput"/>0</span>m <span data-isecs="K1timemarkIsecsInput">0</span>s</h2></div></div>
+					    <div class="ui-block-b"><div class="ui-bar ui-bar-a" style="height:60px"><h1>Treated</h1><p></p><h2><span data-tmins="K1timemarkTminsInput"/>0</span>m <span data-tsecs="K1timemarkTsecsInput">0</span>s</h2></div></div>
+					    
+				    </div><!-- /grid-b -->
+			    
+
+        </div> <!-- ui corner all -->
+        <!-- key events -->
+        
+        
+      </div> <!-- div data role main -->
+      
+
+        
+       
+          
+        
+      
+
+  </div>
+
+<!--end new page for table view -->
 
 </body>
 
