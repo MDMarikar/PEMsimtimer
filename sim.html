@@ -101,7 +101,7 @@
       
       
       setupSetup();
-      
+    
       //when number is selected, put cursor at end
       $(':input[type="number"]').click( function(){
         var x = $(this).val();
@@ -142,6 +142,16 @@
           updatetableview();
           return;
         }
+
+        if (e.target.id =="circleview")
+        {
+          
+            circleprep();
+            return;
+        }
+        
+        
+        
         
         if (e.target.id == "graphing") {
           graphprep();
@@ -1097,7 +1107,9 @@
       <div data-role="controlgroup" data-type="horizontal">
           
           <a href="#pageone" class="ui-btn" id="returnToSim">Return to simulation</a>
+          <a href="#circleview" class="ui-btn" id="circleview">circle view</a>
           <a href="#tableview" class="ui-btn" id="tableview">table view</a>
+          
 
 
       </div>
@@ -1192,6 +1204,8 @@
           
           <a href="#pageone" class="ui-btn" id="returnToSim">Return to simulation</a>
           <a href="#pagetwo" class="ui-btn" id="graphing">graph view</a>
+          <a href="#circleview" class="ui-btn" id="circleview">circle view</a>
+
 
 
         
@@ -1325,6 +1339,484 @@
       </div> <!-- div data role main -->
       
 
+</div>
+<!-- new page for table view -->
+
+<script>
+
+function circleprep() {
+
+
+  //start
+
+  var maxtimeval = findmaxtimeval();
+  if (maxtimeval == null) {
+
+    alert("internal error: max time not calculated");
+
+    maxtimeval = 300;
+  }
+
+  var keyprobtime = gettimevalue(document.getElementById("K1timemarkIminsInput").value, document.getElementById("K1timemarkIsecsInput").value); // Value of where the line will appear
+  if (keyprobtime == 0) {
+
+    keyprobtime = null;
+  }
+
+
+  var keyrxtime = gettimevalue(document.getElementById("K1timemarkTminsInput").value, document.getElementById("K1timemarkTsecsInput").value); // Value of where the line will appear
+  if (keyrxtime == 0) {
+
+    keyrxtime = null;
+  }
+
+  var identtime = " ("+document.getElementById("K1timemarkIminsInput").value+"m "+ document.getElementById("K1timemarkIsecsInput").value+"s"+")";
+
+  var ttime = " ("+document.getElementById("K1timemarkTminsInput").value+"m "+ document.getElementById("K1timemarkTsecsInput").value+"s"+")";
+
+
+    
+  var container_chartFreqAtaTailNum = new Highcharts.Chart({
+
+
+    chart: {
+      events: {
+        load: function() {
+          var label = this.renderer.label("A: " + $("#AirWaySetup").val())
+            .css({
+              width: 400,
+              height: 100,
+              color: 'black',
+              fontSize: '12px'
+            })
+            .attr({
+              'stroke': 'silver',
+              'stroke-width': 2,
+              'r': 5,
+              'padding': 5
+            })
+            .add();
+
+          label.align(Highcharts.extend(label.getBBox(), {
+            align: 'bottom',
+            x: 0, // offset
+            verticalAlign: 'bottom',
+            y: label.getBBox().height, // offset
+          }), null, 'spacingBox');
+
+          var labelB = this.renderer.label("B: " + $("#BSetup").val())
+            .css({
+              width: 400,
+              height: 100,
+              color: 'black',
+              fontSize: '12px'
+            })
+            .attr({
+              'stroke': 'silver',
+              'stroke-width': 2,
+              'r': 5,
+              'padding': 5
+            })
+            .add();
+
+          labelB.align(Highcharts.extend(label.getBBox(), {
+            align: 'bottom',
+            x: label.getBBox().width, // offset
+            verticalAlign: 'bottom',
+            y: label.getBBox().height, // offset
+          }), null, 'spacingBox');
+
+          var labelC = this.renderer.label("C: " + $("#CSetup").val())
+            .css({
+              width: 400,
+              height: 100,
+              color: 'black',
+              fontSize: '12px'
+            })
+            .attr({
+              'stroke': 'silver',
+              'stroke-width': 2,
+              'r': 5,
+              'padding': 5
+            })
+            .add();
+
+          labelC.align(Highcharts.extend(label.getBBox(), {
+            align: 'bottom',
+            x: 0, // offset
+            verticalAlign: 'bottom',
+            y: label.getBBox().height * 2, // offset
+          }), null, 'spacingBox');
+
+          var labelD = this.renderer.label("D: " + $("#DSetup").val())
+            .css({
+              width: 400,
+              height: 100,
+              color: 'black',
+              fontSize: '12px'
+            })
+            .attr({
+              'stroke': 'silver',
+              'stroke-width': 2,
+              'r': 5,
+              'padding': 5
+            })
+            .add();
+
+          labelD.align(Highcharts.extend(label.getBBox(), {
+            align: 'bottom',
+            x: labelC.getBBox().width, // offset
+            verticalAlign: 'bottom',
+            y: label.getBBox().height * 2, // offset
+          }), null, 'spacingBox');
+
+
+          var labelE = this.renderer.label("E: " + $("#ESetup").val())
+            .css({
+              width: 400,
+              height: 100,
+              color: 'black',
+              fontSize: '12px'
+            })
+            .attr({
+              'stroke': 'silver',
+              'stroke-width': 2,
+              'r': 5,
+              'padding': 5
+            })
+            .add();
+
+          labelE.align(Highcharts.extend(label.getBBox(), {
+            align: 'bottom',
+            x: labelC.getBBox().width + labelD.getBBox().width, // offset
+            verticalAlign: 'bottom',
+            y: label.getBBox().height * 2, // offset
+          }), null, 'spacingBox');
+
+          var labelKP = this.renderer.label("Key Problem: " + $("#KPSetup").val())
+            .css({
+              width: 400,
+              height: 100,
+              color: 'black',
+              fontSize: '12px'
+            })
+            .attr({
+              'stroke': 'silver',
+              'stroke-width': 2,
+              'r': 5,
+              'padding': 5
+            })
+            .add();
+
+          labelKP.align(Highcharts.extend(label.getBBox(), {
+            align: 'bottom',
+            x: 0, // offset
+            verticalAlign: 'bottom',
+            y: label.getBBox().height * 2 + labelC.getBBox().height // offset
+          }), null, 'spacingBox');
+
+          var labelKT = this.renderer.label("Definitive Treatment: " + $("#KTSetup").val())
+            .css({
+              width: 400,
+              height: 100,
+              color: 'black',
+              fontSize: '12px'
+            })
+            .attr({
+              'stroke': 'silver',
+              'stroke-width': 2,
+              'r': 5,
+              'padding': 5
+            })
+            .add();
+
+          labelKT.align(Highcharts.extend(label.getBBox(), {
+            align: 'bottom',
+            x: labelKP.getBBox().width, // offset
+            verticalAlign: 'bottom',
+            y: label.getBBox().height * 2 + labelC.getBBox().height // offset// offset
+          }), null, 'spacingBox');
+        }
+      },
+
+      spacingBottom: 100,
+      type: 'bubble',
+      plotBorderWidth: 1,
+      inverted: true,
+      zoomType: 'xy',
+      renderTo: 'circlecontainer'
+    },
+    credits: {
+      enabled: false
+
+    },
+
+
+
+    title: {
+      text: 'Simulation Feedback'
+    },
+
+
+
+    subtitle: {
+      text: ''
+    },
+
+    xAxis: {
+      categories: ['A', 'B', 'C', 'D', 'E']
+    },
+
+    scrollbar: {
+      enabled: false
+    },
+
+    yAxis: {
+      plotLines: [{
+          useHTML: true,
+          color: 'red', // Color value
+          label: {
+            text: 'main problem identified'+identtime,
+            verticalAlign: 'top',
+            rotation: 0
+
+
+          },
+          value: keyprobtime,
+          width: 2 // Width of the line
+        },
+
+        {
+          color: 'blue', // Color value
+          label: {
+            text: 'key rx'+ttime,
+            verticalAlign: 'bottom',
+            rotation: 0
+          },
+
+          value: keyrxtime, // Value of where the line will appear
+          width: 2 // Width of the line
+        }
+      ],
+
+      min: 0,
+      max: maxtimeval,
+      tickInterval: 60,
+
+      title: {
+        text: 'Time (min)'
+      },
+      labels: {
+        formatter: function() {
+
+
+          return Math.floor(this.value / 60) + 'm';
+        }
+
+      },
+    },
+
+
+
+    plotOptions: {
+
+
+
+      bubble: {
+
+        minSize:20,
+        maxSize:20,
+
+        dataLabels: {
+
+
+
+          enabled: true,
+
+          align: 'center',
+
+
+
+
+          formatter: function() {
+
+            var labelstring = '';
+            var minval = 0;
+            var minval = Math.floor(this.y / 60);
+
+            if (minval != 0) {
+              var labelstring = minval + 'm ';
+            }
+            labelstring = labelstring + this.y % 60 + 's';
+
+            return labelstring;
+          }
+        }
+      }
+    },
+
+    legend: {
+      enabled: true,
+      align: 'right'
+    },
+
+    tooltip: {
+        headerFormat: '<b>{series.name}</b><br>',
+        formatter: function() {
+
+          var labelstring = '';
+          var minval = 0;
+          var minval = Math.floor(this.y / 60);
+
+          if (minval != 0) {
+            var labelstring = minval + 'm ';
+          }
+          labelstring = labelstring + this.y % 60 + 's';
+
+          return labelstring;
+        }
+    },
+
+    series: [
+      {
+        name: 'problem occured',
+
+        data: [
+          [gettimevalue(document.getElementById("A1timemarkIminsInput").value, document.getElementById("A1timemarkIsecsInput").value),1
+          ],
+
+          [gettimevalue(document.getElementById("B1timemarkIminsInput").value, document.getElementById("B1timemarkIsecsInput").value),2
+          ],
+
+          [gettimevalue(document.getElementById("C1timemarkIminsInput").value, document.getElementById("C1timemarkIsecsInput").value),3
+          ],
+
+          [gettimevalue(document.getElementById("D1timemarkIminsInput").value, document.getElementById("D1timemarkIsecsInput").value),4
+          ],
+
+          [gettimevalue(document.getElementById("E1timemarkIminsInput").value, document.getElementById("E1timemarkIsecsInput").value),5
+          ]
+
+
+        ],
+
+
+        dataLabels: {
+          enabled: true,
+          xLow: -10,
+          xHigh: 20,
+
+
+
+        },
+
+        color: 'red'
+      },
+      
+      {
+        name: 'problem identified',
+        enabled: false,
+
+        data: [
+          [gettimevalue(document.getElementById("A1timemarkOminsInput").value, document.getElementById("A1timemarkOsecsInput").value), 1
+          ],
+          [gettimevalue(document.getElementById("B1timemarkOminsInput").value, document.getElementById("B1timemarkOsecsInput").value), 2
+          ],
+          [gettimevalue(document.getElementById("C1timemarkOminsInput").value, document.getElementById("C1timemarkOsecsInput").value), 3
+          ],
+          [gettimevalue(document.getElementById("D1timemarkOminsInput").value, document.getElementById("D1timemarkOsecsInput").value), 4
+          ],
+          [gettimevalue(document.getElementById("E1timemarkOminsInput").value, document.getElementById("E1timemarkOsecsInput").value), 5
+          ]
+
+        ],
+
+        dataLabels: {
+          enabled: true,
+          xLow: -10,
+          xHigh: 20,
+
+
+        },
+
+        color: 'yellow'
+
+      },
+
+      
+
+      {
+        name: 'problem treated',
+
+        data: [
+          [gettimevalue(document.getElementById("A1timemarkTminsInput").value, document.getElementById("A1timemarkTsecsInput").value), 1
+          ],
+
+          [gettimevalue(document.getElementById("B1timemarkTminsInput").value, document.getElementById("B1timemarkTsecsInput").value), 2
+          ],
+
+          [gettimevalue(document.getElementById("C1timemarkTminsInput").value, document.getElementById("C1timemarkTsecsInput").value), 3
+          ],
+
+          [gettimevalue(document.getElementById("D1timemarkTminsInput").value, document.getElementById("D1timemarkTsecsInput").value), 4
+          ],
+
+          [gettimevalue(document.getElementById("E1timemarkTminsInput").value, document.getElementById("E1timemarkTsecsInput").value), 5
+          ]
+
+
+        ],
+
+
+        dataLabels: {
+          enabled: true,
+          xLow: -10,
+          xHigh: 20,
+
+
+
+        },
+
+        color: 'green'
+      }
+    ]
+
+
+    //dil
+  });
+
+  //end
+}
+  
+  
+  
+</script>
+
+  <div data-role="page" id="circleview" class="ui-corner-all" data-theme="b">
+      <div data-role="header" data-position="fixed" data-theme="b">
+        
+      
+        
+        <div data-role="controlgroup" data-type="horizontal">
+          
+          <a href="#pageone" class="ui-btn" id="returnToSim">Return to simulation</a>
+          <a href="#pagetwo" class="ui-btn" id="graphing">graph view</a>
+          <a href="#tableview" class="ui-btn" id="tableview">table view</a>
+
+
+        
+        </div>
+        </div> <!-- header end -->
+
+     <div data-role="main" class="ui-content">
+
+
+    <div data-role="main" class="ui-content">
+      <div id="circlecontainer"></div>
+    </div>
+
+
+    </div>
         
        
           
