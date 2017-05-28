@@ -101,6 +101,12 @@
       
       
       setupSetup();
+      
+      $('select').change(function(){
+        
+      var index = $(this).val();
+       templateChange(index); 
+      });
     
       //when number is selected, put cursor at end
       $(':input[type="number"]').click( function(){
@@ -157,6 +163,7 @@
           graphprep();
           return;
         }
+        
         if (e.target.id == "returnToSim") {
           try {
         
@@ -219,6 +226,7 @@
         }
       });
     }
+    
     function setupSetup() {
       $('#AirWaySetup').val("Airway Event");
       $('#BSetup').val("Breathing Event");
@@ -227,6 +235,56 @@
       $('#ESetup').val("Exposure Event");
       $('#KPSetup').val("Key Problem");
       $('#KTSetup').val("Definitive Treatment");
+    }
+    
+    function templateChange(index)
+    {
+      
+      if (index == 1) //none
+      {
+        
+        $('#AirWaySetup').val("Airway Event");
+        $('#BSetup').val("Breathing Event");
+        $('#CSetup').val("Circulation Event");
+        $('#DSetup').val("Disability Event");
+        $('#ESetup').val("Exposure Event");
+        $('#KPSetup').val("Key Problem");
+        $('#KTSetup').val("Definitive Treatment");
+      }
+      else if (index == 2) //sepsis
+      {
+        
+        $('#AirWaySetup').val("No active problem");
+        $('#BSetup').val("Desaturation - O2");
+        $('#CSetup').val("Hypotension - fluid bolus");
+        $('#DSetup').val("Hypoglycaemia - dextrose bolus");
+        $('#ESetup').val("Non blanching rash");
+        $('#KPSetup').val("Sepsis");
+        $('#KTSetup').val("IV Ceftriaxone");
+      }
+      else if (index == 3) //anaphylaxis
+      {
+             
+        $('#AirWaySetup').val("Stridor");
+        $('#BSetup').val("Desaturation");
+        $('#CSetup').val("Hypotension");
+        $('#DSetup').val("Drowsiness");
+        $('#ESetup').val("Urticaria");
+        $('#KPSetup').val("Anaphylaxis");
+        $('#KTSetup').val("IM Adrenaline");
+      }
+      else if (index == 4) //status
+      {
+        
+        $('#AirWaySetup').val("No active problem");
+        $('#BSetup').val("Desaturation");
+        $('#CSetup').val("IV Access for Status Epilepticus");
+        $('#DSetup').val("Seizure");
+        $('#ESetup').val("No active problem");
+        $('#KPSetup').val("Status Epilepticus");
+        $('#KTSetup').val("Benzodiazepine administration");
+      }
+      
     }
     
     function updatetableview()
@@ -307,7 +365,16 @@
     
   </script>
 
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-99834207-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
 
 </head>
 
@@ -328,7 +395,7 @@
       <div class="simtimer ui-block-a" style="width: 75%" data-timer="0"></div>
       <div class="ui-block-b" style="width:25%;font-size: 35px">#EM3</div>
       </div>
-      <div class="ui-grid-e">
+      <div class="ui-grid-f">
         <!--
         <input type="button" id="start" value="start">
         <input type="button" id="pause" value="pause">
@@ -340,6 +407,7 @@
         <div class="ui-block-c"><a href="#reset" id="reset" class="ui-corner-all ui-shadow ui-btn ui-icon-refresh ui-btn-icon-top">reset</a></div>
         <div class="ui-block-d"><a href="#pagetwo" class="ui-corner-all ui-shadow ui-btn ui-icon-eye ui-btn-icon-top" id="graphing">debrief</a></div>
         <div class="ui-block-e"><a href="#setUpMenu" class="ui-corner-all ui-shadow ui-btn ui-icon-gear ui-btn-icon-top" id="setup">setup labels</a></div>
+        <div class="ui-block-e"><a href="#info" class="ui-corner-all ui-shadow ui-btn ui-icon-info ui-btn-icon-top" id="setup">info</a></div>
 
 
       </div>
@@ -1042,6 +1110,52 @@
             enabled: true,
             align: 'right'
           },
+          
+            tooltip: {
+        useHTML : true,
+        headerFormat: '<b>{series.name}</b><br>',
+        formatter: function() {
+
+          var labelstring = '';
+          var minval = 0;
+          var minval = Math.floor(this.y / 60);
+
+          if (minval != 0) {
+            var labelstring = minval + 'm ';
+          }
+          
+          var mytask="null";
+          if (this.x=="A")
+          {
+            mytask = $("#AirWaySetup").val();
+          }
+          else if (this.x=="B")
+          {
+            mytask = $("#BSetup").val();
+          }
+          else if (this.x=="C")
+          {
+            mytask = $("#CSetup").val();
+          }
+          else if (this.x=="D")
+          {
+            mytask = $("#DSetup").val();
+          }
+          else if (this.x=="E")
+          {
+            mytask = $("#ESetup").val();
+          }
+          
+          
+          labelstring = "<b>" + mytask + "</b>" + "<br/>" + "(" + this.series.name + ")" +  "<br/>" + labelstring + this.y % 60 + 's';
+
+          return labelstring;
+        },
+        
+
+    },
+          
+          
           series: [{
               name: 'From problem occurence to identification',
               enabled: false,
@@ -1148,6 +1262,19 @@
 
       <div style="padding:10px 20px;">
         <h3>Setup simulation labels</h3>
+        
+      
+        <div class="ui-field-contain">
+                <label for="template">Scenario:</label>
+                <select name="template" id="template" data-mini="true">
+                    <option value="1">New Scenario</option>
+                    <option value="2">Sepsis</option>
+                    <option value="3" selected="selected">Anaphylaxis</option>
+                    <option value="4">Status Epilepticus</option>
+                </select>
+        </div>
+        
+        
         <div class="ui-field-contain">
           <label for="AirWaySetup">A</label>
           <input type="text" name="AirWaySetup" id="AirWaySetup" value="Airway Task" placeholder="Airway Task" />
@@ -1661,6 +1788,7 @@ function circleprep() {
     },
 
     tooltip: {
+        useHTML : true,
         headerFormat: '<b>{series.name}</b><br>',
         formatter: function() {
 
@@ -1671,10 +1799,36 @@ function circleprep() {
           if (minval != 0) {
             var labelstring = minval + 'm ';
           }
-          labelstring = labelstring + this.y % 60 + 's';
+          
+          var mytask="null";
+          if (this.x=="A")
+          {
+            mytask = $("#AirWaySetup").val();
+          }
+          else if (this.x=="B")
+          {
+            mytask = $("#BSetup").val();
+          }
+          else if (this.x=="C")
+          {
+            mytask = $("#CSetup").val();
+          }
+          else if (this.x=="D")
+          {
+            mytask = $("#DSetup").val();
+          }
+          else if (this.x=="E")
+          {
+            mytask = $("#ESetup").val();
+          }
+          
+          
+          labelstring = "<b>" + mytask + "</b>" + "<br/>" + "(" + this.series.name + ")" +  "<br/>" + labelstring + this.y % 60 + 's';
 
           return labelstring;
-        }
+        },
+        
+
     },
 
     series: [
@@ -1826,6 +1980,37 @@ function circleprep() {
   </div>
 
 <!--end new page for table view -->
+
+
+<div data-role="page" id="info" class="ui-corner-all" data-theme="b">
+    
+    
+    
+    <div data-role="header" data-position="fixed" data-theme="b">
+      
+      <div data-role="controlgroup" data-type="horizontal">
+          
+          <a href="#pageone" class="ui-btn" id="returnToSim">Return to simulation</a>
+
+      </div>
+    
+    </div>
+
+    <div data-role="main" class="ui-content">
+
+      <div style="padding:10px 20px;">
+        <h3>About this web application</h3>
+        
+        This is a prototype <a href=http://www.cureus.com/posters/1154-a-technology-aid-for-performance-assessment-in-paediatric-emergency-department-in-situ-simulation  target="_blank">web application</a> for performance assessment in paediatric Emergency Department In-situ Simulation.
+        <p></p>
+        Please <a href="mailto:d@marikar.net?Subject=web%20app"  target="_blank">contact us</a> for queries and suggestions for improvement
+
+
+      </div>
+
+    </div>
+
+  </div>
 
 </body>
 
