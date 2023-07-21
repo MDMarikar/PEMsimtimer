@@ -1,5 +1,5 @@
 # PEMsimtimer
-A prototype timer for recording events for insitu-simulation
+A prototype timer made in 2016 for recording events for insitu-simulation
 Uses libraries jquery, jquerymobile, timecircles, highcharts
 
 Hosted on github pages [here](https://mdmarikar.github.io/PEMsimtimer/)
